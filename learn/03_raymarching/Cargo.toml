@@ -1,5 +1,5 @@
 [package]
-name = "vertex"
+name = "raymarching"
 version.workspace = true
 edition.workspace = true
 

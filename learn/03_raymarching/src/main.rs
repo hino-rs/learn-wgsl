@@ -1,11 +1,3 @@
-const NUM_VERTICES: u32 = 3;
-const BACKGROUND_COLOR: wgpu::Color = wgpu::Color {
-    r: 1.0,
-    g: 1.0,
-    b: 1.0,
-    a: 1.0,
-};
-
 use std::{collections::HashSet, sync::Arc, time::Instant};
 use wgpu::util::DeviceExt;
 use winit::{
@@ -76,7 +68,6 @@ impl ApplicationHandler for App {
 
             WindowEvent::RedrawRequested => {
                 if let Some(state) = &mut self.state {
-                    // state.update();
                     state.render();
                 }
 
@@ -282,7 +273,7 @@ impl State {
                 width: size.width,
                 height: size.height,
             },
-            camera_pos: [0.0, 0.0, -100.0, 0.0],
+            camera_pos: [0.0, 0.0, -3.0, 0.0],
             camera_rot: Default::default(),
             pressed_keys: HashSet::new(),
         }
@@ -300,14 +291,16 @@ impl State {
         let yaw = self.camera_rot[0];
         let pitch = self.camera_rot[1];
 
-        // 視線方向（前）ベクトルを計算 (単位ベクトル)
         let forward = [
             pitch.cos() * yaw.sin(),
             -pitch.sin(),
             pitch.cos() * yaw.cos(),
         ];
-        // 右方向ベクトルを計算 (単位ベクトル)
-        let right = [yaw.cos(), 0.0, -yaw.sin()];
+        let right = [
+            yaw.cos(),
+            0.0,
+            -yaw.sin(),
+        ];
 
         let mut speed = 0.1;
 
@@ -397,7 +390,12 @@ impl State {
                     resolve_target: None,
                     depth_slice: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(BACKGROUND_COLOR),
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 1.0,
+                            g: 1.0,
+                            b: 1.0,
+                            a: 1.0,
+                        }),
                         store: wgpu::StoreOp::Store,
                     },
                 })],
@@ -410,7 +408,7 @@ impl State {
 
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_bind_group(0, &self.bind_group, &[]);
-            render_pass.draw(0..NUM_VERTICES, 0..1);
+            render_pass.draw(0..3, 0..1);
         }
 
         self.queue.submit(std::iter::once(encoder.finish()));
@@ -420,6 +418,7 @@ impl State {
 
 fn main() {
     env_logger::init();
+
     let event_loop = EventLoop::new().unwrap();
     let mut app = App::default();
     event_loop.run_app(&mut app).unwrap();

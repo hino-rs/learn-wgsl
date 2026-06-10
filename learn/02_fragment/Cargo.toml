@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+log.workspace = true
 wgpu.workspace = true
 winit.workspace = true
 bytemuck.workspace = true
 pollster.workspace = true
+env_logger.workspace = true
